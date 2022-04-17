@@ -45,7 +45,7 @@ You might need root user access as well
       curl --request POST -sL \
            --url 'http://localhost:8080/hierarchy' \
            --header "Content-Type: application/json" \
-           --header "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJodHRwOi8vMC4wLjAuMDo4MDgwL2hpZXJhcmNoeSIsImlzcyI6Imh0dHA6Ly8wLjAuMC4wOjgwODAvIiwiZXhwIjoxNjUwMTkwMzE1LCJ1c2VybmFtZSI6ImpvaG4ifQ.G-x2Tlbf5gX1hrgrAjfPBx9rKMyDuFuIekvcMB4QPiI" \
+           --header "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJodHRwOi8vMC4wLjAuMDo4MDgwL2hpZXJhcmNoeSIsImlzcyI6Imh0dHA6Ly8wLjAuMC4wOjgwODAvIiwiZXhwIjoxNjUwMjQ3MDY1LCJ1c2VybmFtZSI6ImpvaG4ifQ.-g83XtVNtLInuPBe76FIRhNo1lZxosmZyUG-_VIUPXc" \
            --data '{"Pete":"Nick","Barbara":"Nick","Nick":"Sophie","Sophie":"Jonas"}'
    ```
 2. As a response to querying the endpoint, I would like to have a properly formatted JSON which
@@ -75,7 +75,7 @@ You might need root user access as well
    curl --request GET -sL \
         --url 'http://localhost:8080/hierarchy/Nick/supervisors'\
         --header "Content-Type: application/json" \
-        --header "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJodHRwOi8vMC4wLjAuMDo4MDgwL2hpZXJhcmNoeSIsImlzcyI6Imh0dHA6Ly8wLjAuMC4wOjgwODAvIiwiZXhwIjoxNjUwMTkwMzE1LCJ1c2VybmFtZSI6ImpvaG4ifQ.G-x2Tlbf5gX1hrgrAjfPBx9rKMyDuFuIekvcMB4QPiI"
+        --header "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJodHRwOi8vMC4wLjAuMDo4MDgwL2hpZXJhcmNoeSIsImlzcyI6Imh0dHA6Ly8wLjAuMC4wOjgwODAvIiwiZXhwIjoxNjUwMjQ3MDY1LCJ1c2VybmFtZSI6ImpvaG4ifQ.-g83XtVNtLInuPBe76FIRhNo1lZxosmZyUG-_VIUPXc"
    ```
    the response of the query will be:
    ```json

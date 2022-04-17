@@ -45,7 +45,7 @@ fun Route.hierarchyRouting() {
             val hierarchy = call.receive<Map<String, String>>()
             val response = nodeService.createHierarchy(hierarchy)
             val gson = Gson()
-            val json: String = gson.toJson(response)
+            val json = gson.toJson(response)
             call.respondText(text=json, contentType = ContentType("application","json"))
         }
     }

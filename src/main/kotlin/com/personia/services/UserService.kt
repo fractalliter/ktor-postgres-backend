@@ -18,7 +18,7 @@ class UserService {
         if (user != null){
             if (Hasher.checkPassword(password, user)) return true
             else {
-                throw SecurityException("Wrong Password")
+                throw AssertionError("Wrong Password")
             }
         } else throw NotFoundException("user not found")
     }

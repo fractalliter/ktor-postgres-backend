@@ -45,11 +45,11 @@ class HierarchyTest {
         assertEquals(HttpStatusCode.OK, responseLogin.status)
         assertTrue(responseLogin.bodyAsText().contains("token"))
         val gson = Gson()
-        val token = gson.fromJson<Token>(responseLogin.bodyAsText(), Token::class.java)
+        val accessToken = gson.fromJson(responseLogin.bodyAsText(), Token::class.java)
 
         val responseHierarchy = client.post("/hierarchy") {
             contentType(ContentType.Application.Json)
-            header("Authorization","Bearer ${token.token}")
+            header("Authorization","Bearer ${accessToken.token}")
             setBody(mapOf("Nick" to "Sophie", "Sophie" to "Jonas", "Pete" to "Nick", "Barbara" to "Nick"))
         }
         assertEquals(HttpStatusCode.OK, responseHierarchy.status)
@@ -57,7 +57,7 @@ class HierarchyTest {
 
         val response = client.get("hierarchy/Nick/supervisors") {
             contentType(ContentType.Application.Json)
-            header("Authorization","Bearer ${token.token}")
+            header("Authorization","Bearer ${accessToken.token}")
         }
         assertEquals(HttpStatusCode.OK, response.status)
         assertTrue(response.bodyAsText().contains("Jonas"))

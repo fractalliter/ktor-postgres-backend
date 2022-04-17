@@ -6,7 +6,6 @@ import io.ktor.server.application.*
 import io.ktor.server.plugins.*
 import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.response.*
-import org.postgresql.util.PSQLException
 import java.sql.SQLException
 
 data class ExceptionTransform(val message: String?, val code: Int)
@@ -21,10 +20,18 @@ fun Application.configureException() {
     install(StatusPages) {
         exception<Throwable> { call, cause ->
             when(cause) {
+                is AssertionError -> {
+                    call.application.environment.log.info(cause.message)
+                    call.respondText(
+                        text = transformException(cause.message, HttpStatusCode.BadRequest.value),
+                        status = HttpStatusCode.BadRequest,
+                        contentType = ContentType("application","json")
+                    )
+                }
                 is SecurityException -> {
                     call.application.environment.log.info(cause.message)
                     call.respondText(
-                        text = transformException(cause.message, HttpStatusCode.Forbidden.value),
+                        text = transformException("You are a bad guy", HttpStatusCode.Forbidden.value),
                         status = HttpStatusCode.Forbidden,
                         contentType = ContentType("application","json")
                     )
