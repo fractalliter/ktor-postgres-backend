@@ -1,0 +1,36 @@
+version: "3.3"
+
+services:
+  testweb:
+    build:
+      context: .
+      dockerfile: ./Dockerfile-test
+    environment:
+      PORT: 8080
+      JDBC_URL: "jdbc:postgresql://testdb:5432"
+      DATABASE: personia_test
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      JWT_SECRET: secret
+      JWT_ISSUER: "http://0.0.0.0:8080/"
+      JWT_AUDIENCE: "http://0.0.0.0:8080/hierarchy"
+      JWT_REALM: "Access to 'hierarchy'"
+      JWT_EXPIRATION: 31536000
+    ports:
+      - "8080:8080"
+    depends_on:
+      - testdb
+
+  testdb:
+    image: postgres
+    volumes:
+      - ./tmp/testdb:/var/lib/postgresql/testdata
+    environment:
+      POSTGRES_DB: personia_test
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 1s

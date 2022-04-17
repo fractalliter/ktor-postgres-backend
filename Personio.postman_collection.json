@@ -1,0 +1,136 @@
+{
+	"info": {
+		"_postman_id": "e61731c6-57ac-6f68-7c5e-6de0f1ffe57d",
+		"name": "Personio",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "personio-create-hierarchy",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJodHRwOi8vMC4wLjAuMDo4MDgwL2hpZXJhcmNoeSIsImlzcyI6Imh0dHA6Ly8wLjAuMC4wOjgwODAvIiwiZXhwIjoxNjUwMTkwMzE1LCJ1c2VybmFtZSI6ImpvaG4ifQ.G-x2Tlbf5gX1hrgrAjfPBx9rKMyDuFuIekvcMB4QPiI",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"Pete\": \"Nick\",\n    \"Barbara\": \"Nick\",\n    \"Nick\": \"Sophie\",\n    \"Sophie\": \"Jonas\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/hierarchy",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"hierarchy"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "personio-login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\":\"john\",\n    \"password\":\"doe\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/login",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "personio-signup",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\":\"john\",\n    \"password\":\"doe\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/signup",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"signup"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "personio-get-supervisors",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJodHRwOi8vMC4wLjAuMDo4MDgwL2hpZXJhcmNoeSIsImlzcyI6Imh0dHA6Ly8wLjAuMC4wOjgwODAvIiwiZXhwIjoxNjUwMTkwMzE1LCJ1c2VybmFtZSI6ImpvaG4ifQ.G-x2Tlbf5gX1hrgrAjfPBx9rKMyDuFuIekvcMB4QPiI",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/hierarchy/Nick/supervisors?level=1",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"hierarchy",
+						"Nick",
+						"supervisors"
+					],
+					"query": [
+						{
+							"key": "level",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
