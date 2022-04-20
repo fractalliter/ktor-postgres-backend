@@ -43,7 +43,7 @@ class Graph {
      */
     private fun convertToHashMap(): MutableMap<String, MutableMap<String, Any>> {
         val tempMap = mutableMapOf<String, MutableMap<String, Any>>()
-        for (k in adjacent.keys){
+        for (k in adjacent.keys) {
             val t = mutableMapOf<String, Any>()
             adjacent[k]?.forEach { t[it] = emptyMap<String, Any>() }
             tempMap[k] = t
@@ -57,7 +57,7 @@ class Graph {
     fun transformToNestedMap(dfsVisited: Set<String>): Map<String, Map<String, Any>> {
         val tempMap = convertToHashMap()
         val visited = ArrayDeque(dfsVisited)
-        for (i in 1..visited.size){
+        for (i in 1..visited.size) {
             val node = visited.pop()
             val supervisor = tempMap.filterValues { it.containsKey(node) }.keys.toList()
             if (supervisor.isNotEmpty()) {

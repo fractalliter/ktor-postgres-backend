@@ -45,12 +45,19 @@ You might need root user access as well
       curl --request POST -sL \
            --url 'http://localhost:8080/hierarchy' \
            --header "Content-Type: application/json" \
-           --header "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJodHRwOi8vMC4wLjAuMDo4MDgwL2hpZXJhcmNoeSIsImlzcyI6Imh0dHA6Ly8wLjAuMC4wOjgwODAvIiwiZXhwIjoxNjUwMjQ3MDY1LCJ1c2VybmFtZSI6ImpvaG4ifQ.-g83XtVNtLInuPBe76FIRhNo1lZxosmZyUG-_VIUPXc" \
+           --header "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJodHRwOi8vMC4wLjAuMDo4MDgwL2hpZXJhcmNoeSIsImlzcyI6Imh0dHA6Ly8wLjAuMC4wOjgwODAvIiwiZXhwIjoxNjUwNDQ3ODQ4LCJ1c2VybmFtZSI6ImpvaG4ifQ.9WY5LqrwXA3AHfAULhH7q4wpkqSj2B65QUawjpJd8Mc" \
            --data '{"Pete":"Nick","Barbara":"Nick","Nick":"Sophie","Sophie":"Jonas"}'
    ```
 2. As a response to querying the endpoint, I would like to have a properly formatted JSON which
    reflects the employee hierarchy in a way, where the most senior employee is at the top of the JSON
    nested dictionary. For instance, previous input would result in:
+      ```bash
+      curl --request GET -sL \
+           --url 'http://localhost:8080/hierarchy' \
+           --header "Content-Type: application/json" \
+           --header "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJodHRwOi8vMC4wLjAuMDo4MDgwL2hpZXJhcmNoeSIsImlzcyI6Imh0dHA6Ly8wLjAuMC4wOjgwODAvIiwiZXhwIjoxNjUwNDQ3ODQ4LCJ1c2VybmFtZSI6ImpvaG4ifQ.9WY5LqrwXA3AHfAULhH7q4wpkqSj2B65QUawjpJd8Mc"
+   ```
+   the response will be:
    ```json
    {
     "Jonas": {
@@ -67,7 +74,7 @@ You might need root user access as well
    grateful if the endpoint could handle the mistakes and tell her what went wrong. The more
    detailed the error messages are, the better!
 
-3. I would really like it if the hierarchy could be stored in a relational database (e.g. SQLite) and
+4. I would really like it if the hierarchy could be stored in a relational database (e.g. SQLite) and
    queried to get the supervisor and the supervisor’s supervisor of a given employee. I want to send
    the name of an employee to an endpoint, and receive the name of the supervisor and the name of
    the supervisor’s supervisor in return.
@@ -75,7 +82,7 @@ You might need root user access as well
    curl --request GET -sL \
         --url 'http://localhost:8080/hierarchy/Nick/supervisors'\
         --header "Content-Type: application/json" \
-        --header "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJodHRwOi8vMC4wLjAuMDo4MDgwL2hpZXJhcmNoeSIsImlzcyI6Imh0dHA6Ly8wLjAuMC4wOjgwODAvIiwiZXhwIjoxNjUwMjQ3MDY1LCJ1c2VybmFtZSI6ImpvaG4ifQ.-g83XtVNtLInuPBe76FIRhNo1lZxosmZyUG-_VIUPXc"
+        --header "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJodHRwOi8vMC4wLjAuMDo4MDgwL2hpZXJhcmNoeSIsImlzcyI6Imh0dHA6Ly8wLjAuMC4wOjgwODAvIiwiZXhwIjoxNjUwNDQ3ODQ4LCJ1c2VybmFtZSI6ImpvaG4ifQ.9WY5LqrwXA3AHfAULhH7q4wpkqSj2B65QUawjpJd8Mc"
    ```
    the response of the query will be:
    ```json
@@ -88,7 +95,7 @@ You might need root user access as well
    ```
    Sophie is the supervisor of the Nick and Jonas is supervisor of the supervisor of the Nick 
 
-4. I would like the API to be secure so that only I can use it. Please implement some kind of
+5. I would like the API to be secure so that only I can use it. Please implement some kind of
    authentication.
    1. Sign up to the system
       ```bash

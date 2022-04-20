@@ -55,6 +55,14 @@ class HierarchyTest {
         assertEquals(HttpStatusCode.OK, responseHierarchy.status)
         assertTrue(responseHierarchy.bodyAsText().contains("Jonas"))
 
+        val responseGetHierarchy = client.get("/hierarchy") {
+            contentType(ContentType.Application.Json)
+            header("Authorization","Bearer ${accessToken.token}")
+            setBody(mapOf("Nick" to "Sophie", "Sophie" to "Jonas", "Pete" to "Nick", "Barbara" to "Nick"))
+        }
+        assertEquals(HttpStatusCode.OK, responseGetHierarchy.status)
+        assertTrue(responseGetHierarchy.bodyAsText().contains("Jonas"))
+
         val response = client.get("hierarchy/Nick/supervisors") {
             contentType(ContentType.Application.Json)
             header("Authorization","Bearer ${accessToken.token}")

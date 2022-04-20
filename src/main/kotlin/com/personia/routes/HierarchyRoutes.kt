@@ -11,7 +11,7 @@ import io.ktor.server.routing.*
 fun Route.hierarchyRouting() {
     route("hierarchy") {
         get {
-            call.respond(nodeService.findAll())
+            call.respond(nodeService.getHierarchy())
         }
         get("{name?}") {
             val name = call.parameters["name"] ?: return@get call.respondText(

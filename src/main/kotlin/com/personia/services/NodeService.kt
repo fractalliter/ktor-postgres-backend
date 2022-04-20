@@ -5,8 +5,16 @@ import com.personia.models.Node
 import com.personia.utils.Graph
 
 class NodeService {
-
-    suspend fun findAll(): List<Node> = nodeDAO.allConnections()
+    suspend fun getHierarchy(): Map<String, Map<String, Any>> {
+        val graph = Graph()
+        val hierarchy = nodeDAO.allConnections()
+        hierarchy.forEach { (_, node, supervisor) -> graph.connect(supervisor, node) }
+        val root = graph.findRoot().root
+        val dfs = root?.let { graph.dfs(it) }!!
+        val tempMap = graph.transformToNestedMap(dfs)
+        val rootValue = tempMap[root] ?: mapOf()
+        return mapOf(root to rootValue)
+    }
 
     suspend fun findByName(name: String): Node? = nodeDAO.findByName(name)
 
