@@ -1,17 +1,13 @@
-# Backend development task
+# Kotlin-Ktor and postgres backend
+## Introduction
 
-## Introduction: Welcome to the Ever-changing Hierarchy GmbH.
-Help HR manager Personia get a grasp of her ever-changing company’s hierarchy! Every week
-Personia receives a JSON of employees and their supervisors from her demanding CEO Chris,
-who keeps changing his mind about how to structure his company. Personia wants a tool to help
-her better understand the employee hierarchy and respond to employee’s queries about who
-their boss is. Can you help her?
+Here lays a demonstration of my growing interest in Kotlin language and Ktor server framework. It's an example with complex Graph algorithms.
 
 ## Flow
 To start the application you need to:
 1. deploy the docker compose
-2. sign up to the system 
-3. log in to get access token
+2. sign up to the system `/signup`
+3. log in to get access token `/login`
 4. send post request with token to `/hirearchy` to create the hierarchy of the organization
 5. send post request with token to `/hierarchy/{name}/supervisors` to get the supervisors of the user
 
@@ -23,13 +19,12 @@ docker-compose up
 for shutting down the deployment:
 
 ```bash
-docker-compose down
+docker-compose down -v
 ```
 You might need root user access as well
 
-### Personia’s initial requirements were the following:
-1. I would like a pure REST API to post the JSON from Chris. This JSON represents an Employee ->
-   Supervisor relationship that looks like this:
+### What it does?
+We have REST API to post the JSON below. This JSON represents an Person -> Person relationship that looks like this:
    ```json   
    {
       "Pete": "Nick",
@@ -42,20 +37,18 @@ You might need root user access as well
    not always in order.
 
    ```bash
-      curl --request POST -sL \
-           --url 'http://localhost:8080/hierarchy' \
+      curl --request POST -sLv \
+           --url 'http://localhost:3000/hierarchy' \
            --header "Content-Type: application/json" \
-           --header "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJodHRwOi8vMC4wLjAuMDo4MDgwL2hpZXJhcmNoeSIsImlzcyI6Imh0dHA6Ly8wLjAuMC4wOjgwODAvIiwiZXhwIjoxNjUwNDQ3ODQ4LCJ1c2VybmFtZSI6ImpvaG4ifQ.9WY5LqrwXA3AHfAULhH7q4wpkqSj2B65QUawjpJd8Mc" \
-           --data '{"Pete":"Nick","Barbara":"Nick","Nick":"Sophie","Sophie":"Jonas"}'
+           --header "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJodHRwOi8vMC4wLjAuMDo4MDgwL2hpZXJhcmNoeSIsImlzcyI6Imh0dHA6Ly8wLjAuMC4wOjgwODAvIiwiZXhwIjoxNjUwNDkwNzUwLCJ1c2VybmFtZSI6ImphbmUifQ.Xfn4JEOHo-Px7vy0TVyo3malCFlj3eFvzAJejqlefPM" \
+           --data '{"Nick":"Barbara","Barbara":"Nick","Elias":"Levi"}'
    ```
-2. As a response to querying the endpoint, I would like to have a properly formatted JSON which
-   reflects the employee hierarchy in a way, where the most senior employee is at the top of the JSON
-   nested dictionary. For instance, previous input would result in:
-      ```bash
-      curl --request GET -sL \
-           --url 'http://localhost:8080/hierarchy' \
+The response to querying the endpoint where the root is at the top of the JSON nested dictionary. For instance, previous input would result in:
+```bash
+      curl --request GET -sLv \
+           --url 'http://localhost:3000/hierarchy' \
            --header "Content-Type: application/json" \
-           --header "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJodHRwOi8vMC4wLjAuMDo4MDgwL2hpZXJhcmNoeSIsImlzcyI6Imh0dHA6Ly8wLjAuMC4wOjgwODAvIiwiZXhwIjoxNjUwNDQ3ODQ4LCJ1c2VybmFtZSI6ImpvaG4ifQ.9WY5LqrwXA3AHfAULhH7q4wpkqSj2B65QUawjpJd8Mc"
+           --header "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJodHRwOi8vMC4wLjAuMDo4MDgwL2hpZXJhcmNoeSIsImlzcyI6Imh0dHA6Ly8wLjAuMC4wOjgwODAvIiwiZXhwIjoxNjUwNDkwNzUwLCJ1c2VybmFtZSI6ImphbmUifQ.Xfn4JEOHo-Px7vy0TVyo3malCFlj3eFvzAJejqlefPM"
    ```
    the response will be:
    ```json
@@ -70,19 +63,13 @@ You might need root user access as well
     }
    }
    ```
-   Sometimes Chris gives me nonsense hierarchies that contain loops or multiple roots. I would be
-   grateful if the endpoint could handle the mistakes and tell her what went wrong. The more
-   detailed the error messages are, the better!
 
-4. I would really like it if the hierarchy could be stored in a relational database (e.g. SQLite) and
-   queried to get the supervisor and the supervisor’s supervisor of a given employee. I want to send
-   the name of an employee to an endpoint, and receive the name of the supervisor and the name of
-   the supervisor’s supervisor in return.
+Query for a specific Person it's the hierarchy:
    ```bash
-   curl --request GET -sL \
-        --url 'http://localhost:8080/hierarchy/Nick/supervisors'\
+   curl --request GET -sLv \
+        --url 'http://localhost:3000/hierarchy/Nick/supervisors'\
         --header "Content-Type: application/json" \
-        --header "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJodHRwOi8vMC4wLjAuMDo4MDgwL2hpZXJhcmNoeSIsImlzcyI6Imh0dHA6Ly8wLjAuMC4wOjgwODAvIiwiZXhwIjoxNjUwNDQ3ODQ4LCJ1c2VybmFtZSI6ImpvaG4ifQ.9WY5LqrwXA3AHfAULhH7q4wpkqSj2B65QUawjpJd8Mc"
+        --header "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJodHRwOi8vMC4wLjAuMDo4MDgwL2hpZXJhcmNoeSIsImlzcyI6Imh0dHA6Ly8wLjAuMC4wOjgwODAvIiwiZXhwIjoxNjUwNDkwNzUwLCJ1c2VybmFtZSI6ImphbmUifQ.Xfn4JEOHo-Px7vy0TVyo3malCFlj3eFvzAJejqlefPM"
    ```
    the response of the query will be:
    ```json
@@ -93,60 +80,34 @@ You might need root user access as well
      }
    }
    ```
-   Sophie is the supervisor of the Nick and Jonas is supervisor of the supervisor of the Nick 
+Sophie is the supervisor of the Nick and Jonas is supervisor of the supervisor of the Nick 
 
-5. I would like the API to be secure so that only I can use it. Please implement some kind of
-   authentication.
-   1. Sign up to the system
-      ```bash
+## It's secured by JWT authentication
+
+Sign up to the system
+```bash
       curl --request POST -sL \
-           --url 'http://localhost:8080/signup'\
+           --url 'http://localhost:3000/signup'\
            --header "Content-Type: application/json" \
-           --data '{"username":"john","password":"doe"}'
-      ```
-   2. login to the system
-      ```bash
+           --data '{"username":"jane","password":"doe"}'
+  ```
+login to the system
+```bash
       curl --request POST -sL \
-           --url 'http://localhost:8080/login'\
+           --url 'http://localhost:3000/login'\
            --header "Content-Type: application/json" \
-           --data '{"username":"john","password":"doe"}'
-      ```
-      and the response will be access token
-      ```json
+           --data '{"username":"jane","password":"doe"}'
+  ```
+
+The response will be the access token
+```json
        {"token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJodHRwOi8vMC4wLjAuMDo4MDgwL2hpZXJhcmNoeSIsImlzcyI6Imh0dHA6Ly8wLjAuMC4wOjgwODAvIiwiZXhwIjoxNjUwMTU3NjIxLCJ1c2VybmFtZSI6ImpvaG4ifQ.LSJUte7oy9Kv7qkozI3APBzPxHVZ56GID-n0lRIKvdY"}
-      ```
+```
 
-Also, you can use following [Postman JSON collection file](/Personio.postman_collection.json) and test the application from Postman
+Also, you can use following [Postman JSON collection file](/postman_collection.json) and test the application from Postman
 
-### What we expect from you:
-1. Write a small and simple application according to Personia’s specifications, no more, no less.
-2. Provide clear and easy installation instructions (think about the reviewers!). The less steps we have
-   to do to get this running, the better. If we can’t get your app to run, we won’t be able to review it.
-   Docker is your friend!
-3. A set of working unit/functional tests to cover all the use cases you can think of.
-   Ideally take our challenge in Kotlin or Java (whichever you feel most comfortable with). PHP and Ruby
-   are also acceptable, since we use them in our legacy applications. If you prefer another language, please
-   reach out to us first. Remember that your solution must not require us to install any stack specific tool in
-   order to test the result of your work, so use Docker in this case.
-   To execute the tests:
+
+To deploy the test environment and test the application:
    ```bash
    docker-compose --file docker-compose-test.yml up 
    ```
-   
-### What we (mainly) look at when checking out the solution:
-1. Did you follow the instructions, i.e. does your solution work and meet Personia’s requirements?
-   Would Personia be happy to use your solution for her work?
-2. Is your solution easy to read and understand? Would we be happy to contribute to it?
-3. Is your code ready for production (stable, secure, scalable)?
-
-### Final notes
-
-● This challenge is about showing us how you think as an engineer, how you structure your code and
-how you solve problems, not how well you know tool X or design pattern Y.
-
-● Try to design and implement your solution as you would do for real production code. Show us how
-you create robust, stable and maintainable code.
-
-● Be prepared to demonstrate your solution with a tool like curl or Postman
-
-● There is no right or wrong, just be ready to discuss why you choose one approach over another!

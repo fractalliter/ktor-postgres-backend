@@ -9,8 +9,6 @@ import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.config.*
 import io.ktor.server.testing.*
-import org.junit.After
-import java.net.http.HttpClient
 import kotlin.test.*
 
 class UserTest {
@@ -45,8 +43,8 @@ class UserTest {
             contentType(ContentType.Application.Json)
             setBody(mapOf("username" to username, "password" to password))
         }
-        assertEquals(HttpStatusCode.BadRequest, responseDupSignUp.status)
-        assertEquals("duplicate key value violates unique constraint.", responseDupSignUp.bodyAsText())
+        assertEquals(HttpStatusCode.Forbidden, responseDupSignUp.status)
+        assertTrue(responseDupSignUp.bodyAsText().contains("duplicate key value violates unique constraint."))
 
         // Test: login user
         val responseLogin = client.post("/login") {
@@ -61,7 +59,7 @@ class UserTest {
             contentType(ContentType.Application.Json)
             setBody(mapOf("username" to username, "password" to randomString(15)))
         }
-        assertEquals(HttpStatusCode.Forbidden, responseWrongPassword.status)
+        assertEquals(HttpStatusCode.BadRequest, responseWrongPassword.status)
         assertTrue(responseWrongPassword.bodyAsText().contains("Wrong Password"))
 
         // Test: login with username that doesn't exist in the system

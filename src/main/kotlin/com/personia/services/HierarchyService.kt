@@ -3,6 +3,7 @@ package com.personia.services
 import com.personia.dao.node.nodeDAO
 import com.personia.models.Node
 import com.personia.utils.Graph
+import io.ktor.server.plugins.*
 
 class NodeService {
     suspend fun getHierarchy(): Map<String, Map<String, Any>> {
@@ -31,6 +32,7 @@ class NodeService {
     }
 
     suspend fun retrieveSupervisors(name: String, level: Int): Map<String, Map<String, Any>?> {
+        findByName(name) ?: throw NotFoundException("User not found")
         val graph = Graph()
         nodeDAO.allConnections().forEach { graph.connect(it.name,it.supervisor) }
         val visited = graph.dfs(name, level)
