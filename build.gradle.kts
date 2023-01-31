@@ -5,6 +5,7 @@ val exposed_version: String by project
 val postgresql_version: String by project
 val gson_version: String by project
 val jbcrypt_version: String by project
+val hikaricp_version: String by project
 
 plugins {
     application
@@ -51,6 +52,8 @@ dependencies {
     implementation("io.ktor:ktor-server-status-pages:$ktor_version")
     implementation("org.mindrot", "jbcrypt","0.4")
     implementation("io.ktor:ktor-server-auth-jwt:$ktor_version")
+    implementation("io.github.crackthecodeabhi:kreds:0.8")
+    implementation("com.zaxxer:HikariCP:$hikaricp_version")
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
     testImplementation("io.ktor:ktor-server-test-host:$ktor_version")
