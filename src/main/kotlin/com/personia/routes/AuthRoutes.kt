@@ -2,7 +2,7 @@ package com.personia.routes
 
 import com.auth0.jwt.*
 import com.auth0.jwt.algorithms.*
-import com.personia.models.User
+import com.personia.dto.UserDTO
 import com.personia.services.userService
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -19,7 +19,7 @@ fun Route.authRouting(config: ApplicationConfig) {
     val expiration: Int = config.property("jwt.expiration").getString().toInt()
 
     post("/login") {
-        val user = call.receive<User>()
+        val user = call.receive<UserDTO>()
         val userStatus = userService.loginUser(user.username, user.password)
         if (userStatus) {
             val token = JWT.create()
@@ -34,7 +34,7 @@ fun Route.authRouting(config: ApplicationConfig) {
 
 
     post("/signup") {
-        val user = call.receive<User>()
+        val user = call.receive<UserDTO>()
         userService.createUser(user)
         call.respond(HttpStatusCode.Created, "User singed up")
     }

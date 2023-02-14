@@ -8,11 +8,11 @@ object Hasher {
     /**
      * Check if the password matches the User's password
      */
-    fun checkPassword(attempt: String, user: User) = BCrypt.checkpw(attempt, user.password)
+    fun checkPassword(attempt: CharArray, user: User) = BCrypt.checkpw(attempt.toString(), user.password)
 
     /**
      * Returns the hashed version of the supplied password
      */
-    fun hashPassword(password: String): String = BCrypt.hashpw(password, BCrypt.gensalt())
+    fun hashPassword(password: CharArray): String = BCrypt.hashpw(password.toString(), BCrypt.gensalt())
 
 }
