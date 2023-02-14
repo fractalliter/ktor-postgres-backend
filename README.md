@@ -3,6 +3,9 @@
 
 Here lays a demonstration of my growing interest in Kotlin language and Ktor server framework. It's an example with complex Graph algorithms.
 
+> **Warning:**
+> Authentication is only for test purposes. Please use [CAS](https://apereo.github.io/cas/6.6.x/index.html) or [Keycloak](https://www.keycloak.org/).
+
 ## Flow
 To start the application you need to:
 1. deploy the docker compose
