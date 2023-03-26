@@ -24,11 +24,16 @@ jobs:
       postgres:
         image: postgres
         ports:
-          - "5432:5432"
+          - 5432:5432
         env:
           POSTGRES_DB: personia_test
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
     - uses: actions/checkout@v3
     - name: Set up JDK 11
@@ -39,17 +44,17 @@ jobs:
     - name: Build with Gradle
       uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
       with:
-        arguments: build
+        arguments: build --no-daemon
       env:
         POSTGRES_DB: personia_test
         POSTGRES_USER: postgres
         POSTGRES_PASSWORD: postgres
-        JDBC_URL: "jdbc:postgresql://postgres:5432"
+        JDBC_URL: jdbc:postgresql://postgres:5432
         DATABASE: personia_test
         DB_USERNAME: postgres
         DB_PASSWORD: postgres
         JWT_SECRET: secret
-        JWT_ISSUER: "http://0.0.0.0:8080/"
-        JWT_AUDIENCE: "http://0.0.0.0:8080/hierarchy"
-        JWT_REALM: "Access to 'hierarchy'"
+        JWT_ISSUER: http://0.0.0.0:8080/
+        JWT_AUDIENCE: http://0.0.0.0:8080/hierarchy
+        JWT_REALM: Access to 'hierarchy'
         JWT_EXPIRATION: 31536000
