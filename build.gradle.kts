@@ -50,7 +50,7 @@ dependencies {
     implementation("com.google.code.gson:gson:$gson_version")
     implementation("io.ktor:ktor-server-auth:$ktor_version")
     implementation("io.ktor:ktor-server-status-pages:$ktor_version")
-    implementation("org.mindrot", "jbcrypt","0.4")
+    implementation("org.mindrot", "jbcrypt", "0.4")
     implementation("io.ktor:ktor-server-auth-jwt:$ktor_version")
     implementation("io.github.crackthecodeabhi:kreds:0.8")
     implementation("com.zaxxer:HikariCP:$hikaricp_version")

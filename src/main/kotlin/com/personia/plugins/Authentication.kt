@@ -14,14 +14,17 @@ fun Application.configureAuthentication(config: ApplicationConfig) {
     val myRealm = config.property("jwt.realm").getString()
     val secret = config.property("jwt.secret").getString()
     val audience = config.property("jwt.audience").getString()
+
     install(Authentication) {
         jwt("auth-jwt") {
             realm = myRealm
-            verifier(JWT
-                .require(Algorithm.HMAC256(secret))
-                .withAudience(audience)
-                .withIssuer(issuer)
-                .build())
+            verifier(
+                JWT
+                    .require(Algorithm.HMAC256(secret))
+                    .withAudience(audience)
+                    .withIssuer(issuer)
+                    .build()
+            )
             validate { credential ->
                 if (credential.payload.getClaim("username").asString() != "") {
                     JWTPrincipal(credential.payload)
@@ -29,7 +32,7 @@ fun Application.configureAuthentication(config: ApplicationConfig) {
                     null
                 }
             }
-            challenge { _,_ ->
+            challenge { _, _ ->
                 call.respond(HttpStatusCode.Unauthorized, "Token is not valid or has expired")
             }
         }

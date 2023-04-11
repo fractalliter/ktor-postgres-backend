@@ -19,45 +19,56 @@ fun transformException(message: String?, code: Int): String {
 fun Application.configureException() {
     install(StatusPages) {
         exception<Throwable> { call, cause ->
-            when(cause) {
+
+            val log = call.application.environment.log
+            val applicationJson = ContentType("application", "json")
+
+            when (cause) {
                 is AssertionError -> {
-                    call.application.environment.log.info(cause.message)
+                    log.info(cause.message)
                     call.respondText(
                         text = transformException(cause.message, HttpStatusCode.BadRequest.value),
                         status = HttpStatusCode.BadRequest,
-                        contentType = ContentType("application","json")
+                        contentType = applicationJson
                     )
                 }
+
                 is SecurityException -> {
-                    call.application.environment.log.info(cause.message)
+                    log.info(cause.message)
                     call.respondText(
                         text = transformException("You are a bad guy", HttpStatusCode.Forbidden.value),
                         status = HttpStatusCode.Forbidden,
-                        contentType = ContentType("application","json")
+                        contentType = applicationJson
                     )
                 }
+
                 is SQLException -> {
-                    call.application.environment.log.info(cause.message)
+                    log.info(cause.message)
                     call.respondText(
-                        text = transformException("duplicate key value violates unique constraint.", HttpStatusCode.BadRequest.value),
+                        text = transformException(
+                            "duplicate key value violates unique constraint.",
+                            HttpStatusCode.BadRequest.value
+                        ),
                         status = HttpStatusCode.Forbidden,
-                        contentType = ContentType("application","json")
+                        contentType = applicationJson
                     )
                 }
+
                 is NotFoundException -> {
-                    call.application.environment.log.info(cause.message)
+                    log.info(cause.message)
                     call.respondText(
                         text = transformException(cause.message, HttpStatusCode.NotFound.value),
                         status = HttpStatusCode.NotFound,
-                        contentType = ContentType("application","json")
+                        contentType = applicationJson
                     )
                 }
-                is Exception ->{
-                    call.application.environment.log.error(cause.message)
+
+                is Exception -> {
+                    log.error(cause.message)
                     call.respondText(
                         text = transformException(cause.message, HttpStatusCode.InternalServerError.value),
                         status = HttpStatusCode.InternalServerError,
-                        contentType = ContentType("application","json")
+                        contentType = applicationJson
                     )
                 }
             }
