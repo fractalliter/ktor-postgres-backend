@@ -9,7 +9,9 @@ import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.config.*
 import io.ktor.server.testing.*
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class UserTest {
 
@@ -63,7 +65,7 @@ class UserTest {
         assertTrue(responseWrongPassword.bodyAsText().contains("Wrong Password"))
 
         // Test: login with username that doesn't exist in the system
-        val responseUserNotFound= client.post("/login") {
+        val responseUserNotFound = client.post("/login") {
             contentType(ContentType.Application.Json)
             setBody(mapOf("username" to randomString(12), "password" to password))
         }

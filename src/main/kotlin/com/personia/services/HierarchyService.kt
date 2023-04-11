@@ -1,14 +1,15 @@
 package com.personia.services
 
+import com.personia.dao.node.NodeDaoFacade
 import com.personia.dao.node.nodeDAO
 import com.personia.models.Node
 import com.personia.utils.Graph
 import io.ktor.server.plugins.*
 
-class NodeService {
+class NodeService(private val nodeRepository: NodeDaoFacade) {
     suspend fun getHierarchy(): Map<String, Map<String, Any>> {
         val graph = Graph()
-        val hierarchy = nodeDAO.allConnections()
+        val hierarchy = nodeRepository.allConnections()
         hierarchy.forEach { (_, node, supervisor) -> graph.connect(supervisor, node) }
         val root = graph.findRoot().root
         val dfs = root?.let { graph.dfs(it) }!!
@@ -17,7 +18,7 @@ class NodeService {
         return mapOf(root to rootValue)
     }
 
-    suspend fun findByName(name: String): Node? = nodeDAO.findByName(name)
+    suspend fun findByName(name: String): Node? = nodeRepository.findByName(name)
 
     @kotlin.jvm.Throws(java.lang.AssertionError::class)
     suspend fun createHierarchy(hierarchy: Map<String, String>): Map<String?, Map<String, Any>> {
@@ -25,7 +26,7 @@ class NodeService {
         hierarchy.forEach { (node, supervisor) -> graph.connect(supervisor, node) }
         val root = graph.findRoot().root
         val dfs = root?.let { graph.dfs(it) }!!
-        hierarchy.forEach { (node, supervisor) -> nodeDAO.upsertNode(node, supervisor) }
+        hierarchy.forEach { (node, supervisor) -> nodeRepository.upsertNode(node, supervisor) }
         val tempMap = graph.transformToNestedMap(dfs)
         val rootValue = tempMap[root] ?: mapOf()
         return mapOf(root to rootValue)
@@ -34,7 +35,7 @@ class NodeService {
     suspend fun retrieveSupervisors(name: String, level: Int): Map<String, Map<String, Any>?> {
         findByName(name) ?: throw NotFoundException("User not found")
         val graph = Graph()
-        nodeDAO.allConnections().forEach { graph.connect(it.name,it.supervisor) }
+        nodeRepository.allConnections().forEach { graph.connect(it.name, it.supervisor) }
         val visited = graph.dfs(name, level)
         val tmpMap = graph.transformToNestedMap(visited)
         return mapOf(name to tmpMap[name])
@@ -42,4 +43,4 @@ class NodeService {
 
 }
 
-val nodeService = NodeService()
+val nodeService = NodeService(nodeDAO)

@@ -5,14 +5,15 @@ import com.personia.models.Node
 import com.personia.models.Nodes
 import org.jetbrains.exposed.sql.*
 
-class NodeDaoFacadeImp: NodeDaoFacade {
+class NodeDaoFacadeImp : NodeDaoFacade {
 
     private fun resultRowToNode(row: ResultRow) = Node(
         id = row[Nodes.id],
         name = row[Nodes.name],
         supervisor = row[Nodes.supervisor],
     )
-    override suspend fun allConnections(): List<Node> = dbQuery{
+
+    override suspend fun allConnections(): List<Node> = dbQuery {
         Nodes.selectAll().map(::resultRowToNode)
     }
 
@@ -32,7 +33,7 @@ class NodeDaoFacadeImp: NodeDaoFacade {
     }
 
     override suspend fun updateSupervisor(name: String, supervisor: String): Boolean = dbQuery {
-        Nodes.update( { Nodes.name eq name }){
+        Nodes.update({ Nodes.name eq name }) {
             it[Nodes.supervisor] = supervisor
         } > 0
     }
@@ -40,10 +41,10 @@ class NodeDaoFacadeImp: NodeDaoFacade {
     override suspend fun upsertNode(name: String, supervisor: String): Node? = dbQuery {
         val node: Node? = Nodes.select { Nodes.name eq name }.map(::resultRowToNode)
             .singleOrNull()
-        if(node != null){
+        if (node != null) {
             updateSupervisor(name, supervisor)
             findByName(name)
-        }else addNewNode(name, supervisor)
+        } else addNewNode(name, supervisor)
     }
 }
 

@@ -1,14 +1,17 @@
 package com.personia.routes
 
 import com.google.gson.Gson
-import com.personia.services.nodeService
+import com.personia.services.NodeService
+
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Route.hierarchyRouting() {
+fun Route.hierarchyRouting(nodeService: NodeService) {
+    val gson = Gson()
+
     route("hierarchy") {
         get {
             call.respond(nodeService.getHierarchy())
@@ -34,19 +37,20 @@ fun Route.hierarchyRouting() {
             val level = call.request.queryParameters["level"]?.toInt() ?: 2
 
             val response = nodeService.retrieveSupervisors(name, level)
-            val gson = Gson()
             val json: String = gson.toJson(response)
             call.respondText(
-                text=json,
-                contentType = ContentType("application","json")
+                text = json,
+                contentType = ContentType("application", "json")
             )
         }
         post {
             val hierarchy = call.receive<Map<String, String>>()
             val response = nodeService.createHierarchy(hierarchy)
-            val gson = Gson()
             val json = gson.toJson(response)
-            call.respondText(text=json, contentType = ContentType("application","json"))
+            call.respondText(
+                text = json,
+                contentType = ContentType("application", "json")
+            )
         }
     }
 }

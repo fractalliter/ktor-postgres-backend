@@ -10,7 +10,10 @@ import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.config.*
 import io.ktor.server.testing.*
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
+import kotlin.test.assertTrue
 
 data class Token(val token: String)
 
@@ -23,6 +26,7 @@ class HierarchyTest {
                 json()
             }
         }
+        assertNotNull(client)
         environment {
             config = ApplicationConfig("application-test.conf")
         }
@@ -38,6 +42,8 @@ class HierarchyTest {
         }
         assertEquals(HttpStatusCode.Created, responseSignUp.status)
         assertEquals("User singed up", responseSignUp.bodyAsText())
+
+        // Testing login endpoint
         val responseLogin = client.post("/login") {
             contentType(ContentType.Application.Json)
             setBody(mapOf("username" to username, "password" to password))
@@ -47,9 +53,10 @@ class HierarchyTest {
         val gson = Gson()
         val accessToken = gson.fromJson(responseLogin.bodyAsText(), Token::class.java)
 
+        // Testing hierarchy endpoint
         val responseHierarchy = client.post("/hierarchy") {
             contentType(ContentType.Application.Json)
-            header("Authorization","Bearer ${accessToken.token}")
+            header("Authorization", "Bearer ${accessToken.token}")
             setBody(mapOf("Nick" to "Sophie", "Sophie" to "Jonas", "Pete" to "Nick", "Barbara" to "Nick"))
         }
         assertEquals(HttpStatusCode.OK, responseHierarchy.status)
@@ -57,15 +64,16 @@ class HierarchyTest {
 
         val responseGetHierarchy = client.get("/hierarchy") {
             contentType(ContentType.Application.Json)
-            header("Authorization","Bearer ${accessToken.token}")
+            header("Authorization", "Bearer ${accessToken.token}")
             setBody(mapOf("Nick" to "Sophie", "Sophie" to "Jonas", "Pete" to "Nick", "Barbara" to "Nick"))
         }
         assertEquals(HttpStatusCode.OK, responseGetHierarchy.status)
         assertTrue(responseGetHierarchy.bodyAsText().contains("Jonas"))
 
+        // Testing supervisors
         val response = client.get("hierarchy/Nick/supervisors") {
             contentType(ContentType.Application.Json)
-            header("Authorization","Bearer ${accessToken.token}")
+            header("Authorization", "Bearer ${accessToken.token}")
         }
         assertEquals(HttpStatusCode.OK, response.status)
         assertTrue(response.bodyAsText().contains("Jonas"))

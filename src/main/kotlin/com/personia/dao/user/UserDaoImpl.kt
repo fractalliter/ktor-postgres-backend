@@ -1,11 +1,13 @@
 package com.personia.dao.user
 
+import com.personia.dao.DatabaseFactory.dbQuery
 import com.personia.models.User
 import com.personia.models.Users
-import org.jetbrains.exposed.sql.*
-import com.personia.dao.DatabaseFactory.dbQuery
+import org.jetbrains.exposed.sql.ResultRow
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.select
 
-class UserDaoImpl: UserDaoFacade {
+class UserDaoImpl : UserDaoFacade {
 
     private fun resultRowToNode(row: ResultRow) = User(
         id = row[Users.id],
@@ -13,7 +15,7 @@ class UserDaoImpl: UserDaoFacade {
         password = row[Users.password],
     )
 
-    override suspend fun createUser(user: User): User? = dbQuery{
+    override suspend fun createUser(user: User): User? = dbQuery {
         val insertStatement = Users.insert {
             it[Users.username] = user.username
             it[Users.password] = user.password
