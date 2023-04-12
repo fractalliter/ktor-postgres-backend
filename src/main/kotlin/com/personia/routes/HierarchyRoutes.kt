@@ -9,9 +9,10 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Route.hierarchyRouting(nodeService: NodeService) {
-    val gson = Gson()
+private val applicationJson = ContentType("application", "json")
+private val gson = Gson()
 
+fun Route.hierarchyRouting(nodeService: NodeService) {
     route("hierarchy") {
         get {
             call.respond(nodeService.getHierarchy())
@@ -38,19 +39,13 @@ fun Route.hierarchyRouting(nodeService: NodeService) {
 
             val response = nodeService.retrieveSupervisors(name, level)
             val json: String = gson.toJson(response)
-            call.respondText(
-                text = json,
-                contentType = ContentType("application", "json")
-            )
+            call.respondText(text = json,contentType = applicationJson)
         }
         post {
             val hierarchy = call.receive<Map<String, String>>()
             val response = nodeService.createHierarchy(hierarchy)
             val json = gson.toJson(response)
-            call.respondText(
-                text = json,
-                contentType = ContentType("application", "json")
-            )
+            call.respondText(text = json,contentType = applicationJson)
         }
     }
 }
