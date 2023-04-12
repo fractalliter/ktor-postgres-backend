@@ -1,6 +1,5 @@
-package com.personia
+package com.personia.integrations
 
-import com.google.gson.Gson
 import com.personia.plugins.configureRouting
 import com.personia.utils.randomString
 import io.ktor.client.plugins.contentnegotiation.*
@@ -12,21 +11,17 @@ import io.ktor.server.config.*
 import io.ktor.server.testing.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
-data class Token(val token: String)
-
-class HierarchyTest {
+class UserTest {
 
     @Test
-    fun testHierarchy() = testApplication {
+    fun testAuthFlow() = testApplication {
         val client = createClient {
             install(ContentNegotiation) {
                 json()
             }
         }
-        assertNotNull(client)
         environment {
             config = ApplicationConfig("application-test.conf")
         }
@@ -36,6 +31,8 @@ class HierarchyTest {
 
         val username = randomString(10)
         val password = randomString(10)
+
+        // Test: sing up user
         val responseSignUp = client.post("/signup") {
             contentType(ContentType.Application.Json)
             setBody(mapOf("username" to username, "password" to password))
@@ -43,39 +40,36 @@ class HierarchyTest {
         assertEquals(HttpStatusCode.Created, responseSignUp.status)
         assertEquals("User singed up", responseSignUp.bodyAsText())
 
-        // Testing login endpoint
+        // Test: duplicate username exception
+        val responseDupSignUp = client.post("/signup") {
+            contentType(ContentType.Application.Json)
+            setBody(mapOf("username" to username, "password" to password))
+        }
+        assertEquals(HttpStatusCode.Forbidden, responseDupSignUp.status)
+        assertTrue(responseDupSignUp.bodyAsText().contains("duplicate key value violates unique constraint."))
+
+        // Test: login user
         val responseLogin = client.post("/login") {
             contentType(ContentType.Application.Json)
             setBody(mapOf("username" to username, "password" to password))
         }
         assertEquals(HttpStatusCode.OK, responseLogin.status)
         assertTrue(responseLogin.bodyAsText().contains("token"))
-        val gson = Gson()
-        val accessToken = gson.fromJson(responseLogin.bodyAsText(), Token::class.java)
 
-        // Testing hierarchy endpoint
-        val responseHierarchy = client.post("/hierarchy") {
+        // Test: login with wrong password
+        val responseWrongPassword = client.post("/login") {
             contentType(ContentType.Application.Json)
-            header("Authorization", "Bearer ${accessToken.token}")
-            setBody(mapOf("Nick" to "Sophie", "Sophie" to "Jonas", "Pete" to "Nick", "Barbara" to "Nick"))
+            setBody(mapOf("username" to username, "password" to randomString(15)))
         }
-        assertEquals(HttpStatusCode.OK, responseHierarchy.status)
-        assertTrue(responseHierarchy.bodyAsText().contains("Jonas"))
+        assertEquals(HttpStatusCode.BadRequest, responseWrongPassword.status)
+        assertTrue(responseWrongPassword.bodyAsText().contains("Wrong Password"))
 
-        val responseGetHierarchy = client.get("/hierarchy") {
+        // Test: login with username that doesn't exist in the system
+        val responseUserNotFound = client.post("/login") {
             contentType(ContentType.Application.Json)
-            header("Authorization", "Bearer ${accessToken.token}")
-            setBody(mapOf("Nick" to "Sophie", "Sophie" to "Jonas", "Pete" to "Nick", "Barbara" to "Nick"))
+            setBody(mapOf("username" to randomString(12), "password" to password))
         }
-        assertEquals(HttpStatusCode.OK, responseGetHierarchy.status)
-        assertTrue(responseGetHierarchy.bodyAsText().contains("Jonas"))
-
-        // Testing supervisors
-        val response = client.get("hierarchy/Nick/supervisors") {
-            contentType(ContentType.Application.Json)
-            header("Authorization", "Bearer ${accessToken.token}")
-        }
-        assertEquals(HttpStatusCode.OK, response.status)
-        assertTrue(response.bodyAsText().contains("Jonas"))
+        assertEquals(HttpStatusCode.NotFound, responseUserNotFound.status)
+        assertTrue(responseUserNotFound.bodyAsText().contains("user not found"))
     }
 }
