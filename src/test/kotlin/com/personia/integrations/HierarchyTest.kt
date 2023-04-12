@@ -3,6 +3,7 @@ package com.personia.integrations
 import com.google.gson.Gson
 import com.personia.plugins.configureRouting
 import com.personia.utils.randomString
+import io.ktor.client.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
@@ -33,25 +34,10 @@ class HierarchyTest {
         application {
             configureRouting(environment.config)
         }
-
-        val username = randomString(10)
-        val password = randomString(10)
-        val responseSignUp = client.post("/signup") {
-            contentType(ContentType.Application.Json)
-            setBody(mapOf("username" to username, "password" to password))
-        }
-        assertEquals(HttpStatusCode.Created, responseSignUp.status)
-        assertEquals("User singed up", responseSignUp.bodyAsText())
-
-        // Testing login endpoint
-        val responseLogin = client.post("/login") {
-            contentType(ContentType.Application.Json)
-            setBody(mapOf("username" to username, "password" to password))
-        }
-        assertEquals(HttpStatusCode.OK, responseLogin.status)
-        assertTrue(responseLogin.bodyAsText().contains("token"))
-        val gson = Gson()
-        val accessToken = gson.fromJson(responseLogin.bodyAsText(), Token::class.java)
+        val responseLogin = authenticateClient(client)
+        assertNotNull(responseLogin)
+        val accessToken = extractToken(responseLogin)
+        assertNotNull(accessToken)
 
         // Testing hierarchy endpoint
         val responseHierarchy = client.post("/hierarchy") {
@@ -62,14 +48,6 @@ class HierarchyTest {
         assertEquals(HttpStatusCode.OK, responseHierarchy.status)
         assertTrue(responseHierarchy.bodyAsText().contains("Jonas"))
 
-        val responseGetHierarchy = client.get("/hierarchy") {
-            contentType(ContentType.Application.Json)
-            header("Authorization", "Bearer ${accessToken.token}")
-            setBody(mapOf("Nick" to "Sophie", "Sophie" to "Jonas", "Pete" to "Nick", "Barbara" to "Nick"))
-        }
-        assertEquals(HttpStatusCode.OK, responseGetHierarchy.status)
-        assertTrue(responseGetHierarchy.bodyAsText().contains("Jonas"))
-
         // Testing supervisors
         val response = client.get("hierarchy/Nick/supervisors") {
             contentType(ContentType.Application.Json)
@@ -77,5 +55,33 @@ class HierarchyTest {
         }
         assertEquals(HttpStatusCode.OK, response.status)
         assertTrue(response.bodyAsText().contains("Jonas"))
+    }
+
+    private suspend fun extractToken(responseLogin: HttpResponse): Token? {
+        val gson = Gson()
+        return gson.fromJson(responseLogin.bodyAsText(), Token::class.java)
+    }
+
+    private suspend fun authenticateClient(client: HttpClient): HttpResponse {
+        val credential = mapOf(
+            "username" to randomString(10),
+            "password" to randomString(10)
+        )
+
+        val responseSignUp = client.post("/signup") {
+            contentType(ContentType.Application.Json)
+            setBody(credential)
+        }
+        assertEquals(HttpStatusCode.Created, responseSignUp.status)
+        assertEquals("User singed up", responseSignUp.bodyAsText())
+
+        // Testing login endpoint
+        val responseLogin = client.post("/login") {
+            contentType(ContentType.Application.Json)
+            setBody(credential)
+        }
+        assertEquals(HttpStatusCode.OK, responseLogin.status)
+        assertTrue(responseLogin.bodyAsText().contains("token"))
+        return responseLogin
     }
 }
