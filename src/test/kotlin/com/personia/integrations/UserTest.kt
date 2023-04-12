@@ -1,4 +1,4 @@
-package com.personia
+package com.personia.integrations
 
 import com.personia.plugins.configureRouting
 import com.personia.utils.randomString
@@ -29,13 +29,15 @@ class UserTest {
             configureRouting(environment.config)
         }
 
-        val username = randomString(10)
-        val password = randomString(10)
+        val credentials = mapOf(
+            "username" to randomString(10),
+            "password" to randomString(10)
+        )
 
         // Test: sing up user
         val responseSignUp = client.post("/signup") {
             contentType(ContentType.Application.Json)
-            setBody(mapOf("username" to username, "password" to password))
+            setBody(credentials)
         }
         assertEquals(HttpStatusCode.Created, responseSignUp.status)
         assertEquals("User singed up", responseSignUp.bodyAsText())
@@ -43,7 +45,7 @@ class UserTest {
         // Test: duplicate username exception
         val responseDupSignUp = client.post("/signup") {
             contentType(ContentType.Application.Json)
-            setBody(mapOf("username" to username, "password" to password))
+            setBody(credentials)
         }
         assertEquals(HttpStatusCode.Forbidden, responseDupSignUp.status)
         assertTrue(responseDupSignUp.bodyAsText().contains("duplicate key value violates unique constraint."))
@@ -51,23 +53,25 @@ class UserTest {
         // Test: login user
         val responseLogin = client.post("/login") {
             contentType(ContentType.Application.Json)
-            setBody(mapOf("username" to username, "password" to password))
+            setBody(credentials)
         }
         assertEquals(HttpStatusCode.OK, responseLogin.status)
         assertTrue(responseLogin.bodyAsText().contains("token"))
 
         // Test: login with wrong password
+        val wrongPasswordCredential = credentials + mapOf("password" to randomString(15))
         val responseWrongPassword = client.post("/login") {
             contentType(ContentType.Application.Json)
-            setBody(mapOf("username" to username, "password" to randomString(15)))
+            setBody(wrongPasswordCredential)
         }
         assertEquals(HttpStatusCode.BadRequest, responseWrongPassword.status)
         assertTrue(responseWrongPassword.bodyAsText().contains("Wrong Password"))
 
         // Test: login with username that doesn't exist in the system
+        val wrongUsernameCredential = credentials + mapOf("username" to randomString(12))
         val responseUserNotFound = client.post("/login") {
             contentType(ContentType.Application.Json)
-            setBody(mapOf("username" to randomString(12), "password" to password))
+            setBody(wrongUsernameCredential)
         }
         assertEquals(HttpStatusCode.NotFound, responseUserNotFound.status)
         assertTrue(responseUserNotFound.bodyAsText().contains("user not found"))
