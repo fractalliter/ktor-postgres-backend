@@ -6,6 +6,7 @@ val database_driver_version: String by project
 val gson_version: String by project
 val jbcrypt_version: String by project
 val hikaricp_version: String by project
+val redis_version: String by project
 
 plugins {
     application
@@ -37,11 +38,6 @@ repositories {
 }
 
 dependencies {
-    implementation("io.ktor:ktor-server-content-negotiation-jvm:$ktor_version")
-    implementation("io.ktor:ktor-client-content-negotiation:$ktor_version")
-    implementation("io.ktor:ktor-server-core-jvm:$ktor_version")
-    implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:$ktor_version")
-    implementation("io.ktor:ktor-server-netty-jvm:$ktor_version")
     implementation("ch.qos.logback:logback-classic:$logback_version")
     implementation("org.jetbrains.exposed:exposed-core:$exposed_version")
     implementation("org.jetbrains.exposed:exposed-dao:$exposed_version")
@@ -49,14 +45,19 @@ dependencies {
     // add database driver below, default is postgres
     implementation("org.postgresql:postgresql:$database_driver_version")
     implementation("com.google.code.gson:gson:$gson_version")
+    implementation("org.mindrot:jbcrypt:$jbcrypt_version")
+    implementation("io.github.crackthecodeabhi:kreds:$redis_version")
+    implementation("com.zaxxer:HikariCP:$hikaricp_version")
+    implementation("io.ktor:ktor-server-content-negotiation-jvm:$ktor_version")
+    implementation("io.ktor:ktor-client-content-negotiation:$ktor_version")
+    implementation("io.ktor:ktor-server-core-jvm:$ktor_version")
+    implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:$ktor_version")
+    implementation("io.ktor:ktor-server-netty-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-auth:$ktor_version")
     implementation("io.ktor:ktor-server-status-pages:$ktor_version")
-    implementation("org.mindrot", "jbcrypt", "0.4")
     implementation("io.ktor:ktor-server-auth-jwt:$ktor_version")
-    implementation("io.github.crackthecodeabhi:kreds:0.8")
-    implementation("com.zaxxer:HikariCP:$hikaricp_version")
-    testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
-    testImplementation("io.ktor:ktor-server-test-host:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlin_version")
+    testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
+    testImplementation("io.ktor:ktor-server-test-host-jvm:$ktor_version")
 }

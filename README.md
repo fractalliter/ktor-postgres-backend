@@ -1,8 +1,12 @@
 # Kotlin Ktor and postgres backend
+
 Here lays a Kotlin web project with Ktor framework, Postgres database, and JWT Authentication.
 
 The project comprises following ingredients:
-- [Ktor](https://ktor.io/) server includes [JSON serializers](https://ktor.io/docs/serialization.html), [Authentication](https://ktor.io/docs/authentication.html), and [Testing](https://ktor.io/docs/testing.html)
+
+- [Ktor](https://ktor.io/) server
+  includes [JSON serializers](https://ktor.io/docs/serialization.html), [Authentication](https://ktor.io/docs/authentication.html),
+  and [Testing](https://ktor.io/docs/testing.html)
 - [Netty](https://netty.io/) web server
 - [Postgres](https://www.postgresql.org/) as database
 - [Exposed](https://github.com/JetBrains/Exposed) as ORM
@@ -15,11 +19,13 @@ better go for [GUAVA Graph](https://github.com/google/guava/wiki/GraphsExplained
 
 Project is agnostic about database, you can dynamically change Postgres to any other databases that Exposed JDBC
 supports by changing a couple of variables:
+
 - the database driver version in `gradle.properties`
 - the database driver dependency in `build.gradle.kts`
 - the **WEB_DB_URL** variable in `.env` file
 
 ## Flow
+
 1. deploy the docker compose with `docker compose up -d` command
 2. sign up to the system `/signup` with a username and password(not hardened enough)
 3. log in to with username and password to get access token `/login`
@@ -31,7 +37,8 @@ supports by changing a couple of variables:
 > You need **root access** for docker
 
 Go to the root directory of the project where `docker-compose.yml` is and change the environment variables in
-`.env-example` with yours and rename the file to `mv .env-example .env` then deploy the application with following command:
+`.env-example` with yours and rename the file to `mv .env-example .env` then deploy the application with following
+command:
 
 ```bash
 docker-compose up
@@ -145,17 +152,21 @@ The response will be the access token
 ```
 
 ## How to test locally
+
 For testing the project locally you can run docker compose with `docker-compose-test.yml` file. It will run the tests
 against a test database.
+
 ```bash
 docker-compose --file docker-compose-test.yml up 
 ```
-After finishing the tests you can clean test data nd  shut the containers down with following command:
+
+After finishing the tests you can clean test data nd shut the containers down with following command:
 
 ```bash
 docker-compose --file docker-compose-test.yml down -v
 ```
 
 ## Continues Integration
+
 For continues integration, the CI workflow prepares the database, run the gradle build with tests, and generates report
 to Codacy about the quality of code.
