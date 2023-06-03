@@ -31,31 +31,3 @@ services:
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U postgres" ]
       interval: 1s
-#  auth-db:
-#    image: postgres
-#    volumes:
-#      - postgres_data:/var/lib/postgresql/data
-#    environment:
-#      POSTGRES_DB: ${AUTH_DB_DATABASE}
-#      POSTGRES_USER: ${AUTH_DB_USER}
-#      POSTGRES_PASSWORD: ${AUTH_DB_PASSWORD}
-#  keycloak:
-#      image: docker.io/bitnami/keycloak:latest
-#      environment:
-#        DB_VENDOR: ${AUTH_DB_VENDOR}
-#        KEYCLOAK_DATABASE_HOST: ${AUTH_DB_ADDRESS}
-#        KEYCLOAK_DATABASE_PORT: ${AUTH_DB_PORT}
-#        KEYCLOAK_DATABASE_NAME: ${AUTH_DB_DATABASE}
-#        KEYCLOAK_DATABASE_USER: ${AUTH_DB_USER}
-#        KEYCLOAK_DATABASE_SCHEMA: ${AUTH_DB_SCHEMA}
-#        KEYCLOAK_DATABASE_PASSWORD: ${AUTH_DB_PASSWORD}
-#        KEYCLOAK_MANAGEMENT_USER: ${AUTH_SERVER_USER}
-#        KEYCLOAK_MANAGEMENT_PASSWORD: ${AUTH_SERVER_PASSWORD}
-#        KEYCLOAK_ADMIN_USER: ${AUTH_ADMIN_USER}
-#        KEYCLOAK_ADMIN_PASSWORD: ${AUTH_ADMIN_PASSWORD}
-#        # Uncomment the line below if you want to specify JDBC parameters. The parameter below is just an example, and it shouldn't be used in production without knowledge. It is highly recommended that you read the PostgreSQL JDBC driver documentation in order to use it.
-#        #KEYCLOAK_JDBC_PARAMS: "ssl=true"
-#      ports:
-#        - "8080:8080"
-#      depends_on:
-#        - auth-db
