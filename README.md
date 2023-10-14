@@ -2,7 +2,7 @@
 
 Here lays a Kotlin web project with Ktor framework, Postgres database, and JWT Authentication.
 
-The project comprises following ingredients:
+The project comprises the following ingredients:
 
 - [Ktor](https://ktor.io/) server
   includes [JSON serializers](https://ktor.io/docs/serialization.html), [Authentication](https://ktor.io/docs/authentication.html),
@@ -12,12 +12,12 @@ The project comprises following ingredients:
 - [Exposed](https://github.com/JetBrains/Exposed) as ORM
 - [Hikari Connection Pool](https://github.com/brettwooldridge/HikariCP)
 - [Logback](https://logback.qos.ch/) for logging purposes
-- [JBCrypt](https://www.mindrot.org/projects/jBCrypt/) for hashing passwords(No salting yet)
+- [JBCrypt](https://www.mindrot.org/projects/jBCrypt/) for hashing passwords (No salting yet)
 
-There is a simple implementation of Graph search and traverse with DFS algorithm but if you aim for a solid solution
+There is a simple implementation of DFS algorithm, but if you aim for a solid solution, 
 better go for [GUAVA Graph](https://github.com/google/guava/wiki/GraphsExplained) from Google.
 
-Project is agnostic about database, you can dynamically change Postgres to any other databases that Exposed JDBC
+Project is SQL DB agnostic. You are able to dynamically change Postgres to any other databases that Exposed JDBC
 supports by changing a couple of variables:
 
 - the database driver version in `gradle.properties`
@@ -27,9 +27,9 @@ supports by changing a couple of variables:
 ## Flow
 
 1. deploy the docker compose with `docker compose up -d` command
-2. sign up to the system `/signup` with a username and password(not hardened enough)
-3. log in to with username and password to get access token `/login`
-4. send post request with payload and token to `/hirearchy` to create the hierarchy of the organization
+2. sign up to `/signup` route providing a username and password(not hardened enough)
+3. log in to with your username and password to get access token `/login`
+4. send `POST` request with payload and token to `/hirearchy` to create the hierarchy of the organization
 5. send get request with token to `/hierarchy/{name}/supervisors` to fetch the supervisors of the current user
 
 ## How to use
@@ -37,11 +37,10 @@ supports by changing a couple of variables:
 > You need **root access** for docker
 
 Go to the root directory of the project where `docker-compose.yml` is and change the environment variables in
-`.env-example` with yours and rename the file to `mv .env-example .env` then deploy the application with following
-command:
+`.env-example` with yours and rename the file to `.env` then deploy the application with the following command:
 
 ```bash
-docker-compose up
+docker-compose up -d
 ```
 
 for shutting down the deployment run following command where the `docker-compose.yml` file resides:
@@ -75,8 +74,8 @@ curl --request POST -sLv \
    
 ```
 
-The response to querying the endpoint where the root is at the top of the JSON nested dictionary. For instance, previous
-input would result in:
+The response to querying the endpoint where the root is at the top of the JSON nested dictionary. 
+For instance, previous input would result in:
 
 ```bash
 curl --request GET -sLv \
@@ -121,7 +120,7 @@ the response of the query will be:
 }
 ```
 
-Sophie is the supervisor of the Nick and Jonas is supervisor of the supervisor of the Nick
+Sophie is the supervisor of the Nick, and Jonas is a supervisor of the supervisor of the Nick
 
 ## It's secured by JWT authentication
 
@@ -151,16 +150,16 @@ The response will be the access token
 }
 ```
 
-## How to test locally
+## How to run tests locally
 
-For testing the project locally you can run docker compose with `docker-compose-test.yml` file. It will run the tests
-against a test database.
+To run the tests locally, you should run docker compose with `docker-compose-test.yml` file.
+It will run the tests against the test database.
 
 ```bash
 docker-compose --file docker-compose-test.yml up 
 ```
 
-After finishing the tests you can clean test data nd shut the containers down with following command:
+After finishing the tests, you can clean test data nd shut the containers down with the following command:
 
 ```bash
 docker-compose --file docker-compose-test.yml down -v
@@ -168,5 +167,5 @@ docker-compose --file docker-compose-test.yml down -v
 
 ## Continues Integration
 
-For continues integration, the CI workflow prepares the database, run the gradle build with tests, and generates report
-to Codacy about the quality of code.
+CI workflow prepares the database, runs the Gradle build with tests, 
+and generates a good quality report to [Codacy](https://www.codacy.com/).
