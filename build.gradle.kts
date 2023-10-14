@@ -14,7 +14,7 @@ plugins {
     kotlin("jvm") version "1.8.0"
     id("org.jetbrains.kotlin.plugin.serialization") version "1.6.20"
     id("com.github.johnrengelman.shadow") version "7.0.0"
-    id("org.sonarqube") version "3.5.0.2730"
+    id("org.sonarqube") version "4.4.1.3373"
 }
 
 tasks {
