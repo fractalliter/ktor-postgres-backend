@@ -25,7 +25,7 @@ tasks {
     }
     jacocoTestReport {
         reports {
-            xml.required
+            xml.required.set(true)
         }
     }
 }
