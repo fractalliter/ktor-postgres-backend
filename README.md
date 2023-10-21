@@ -67,7 +67,7 @@ not always in order.
 
 ```bash
 curl --request POST -sLv \
-    --url 'http://localhost:3000/hierarchy' \
+    --url 'http://localhost:8080/hierarchy' \
     --header "Content-Type: application/json" \
     --header "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJodHRwOi8vMC4wLjAuMDo4MDgwL2hpZXJhcmNoeSIsImlzcyI6Imh0dHA6Ly8wLjAuMC4wOjgwODAvIiwiZXhwIjoxNjUwNDkwNzUwLCJ1c2VybmFtZSI6ImphbmUifQ.Xfn4JEOHo-Px7vy0TVyo3malCFlj3eFvzAJejqlefPM" \
     --data '{"Nick":"Barbara","Barbara":"Nick","Elias":"Levi"}'
@@ -79,7 +79,7 @@ For instance, previous input would result in:
 
 ```bash
 curl --request GET -sLv \
-    --url 'http://localhost:3000/hierarchy' \
+    --url 'http://localhost:8080/hierarchy' \
     --header "Content-Type: application/json" \
     --header "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJodHRwOi8vMC4wLjAuMDo4MDgwL2hpZXJhcmNoeSIsImlzcyI6Imh0dHA6Ly8wLjAuMC4wOjgwODAvIiwiZXhwIjoxNjUwNDkwNzUwLCJ1c2VybmFtZSI6ImphbmUifQ.Xfn4JEOHo-Px7vy0TVyo3malCFlj3eFvzAJejqlefPM"
 ```
@@ -103,7 +103,7 @@ Query for a specific Person it's the hierarchy:
 
 ```bash
 curl --request GET -sLv \
-    --url 'http://localhost:3000/hierarchy/Nick/supervisors'\
+    --url 'http://localhost:8080/hierarchy/Nick/supervisors'\
     --header "Content-Type: application/json" \
     --header "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJodHRwOi8vMC4wLjAuMDo4MDgwL2hpZXJhcmNoeSIsImlzcyI6Imh0dHA6Ly8wLjAuMC4wOjgwODAvIiwiZXhwIjoxNjUwNDkwNzUwLCJ1c2VybmFtZSI6ImphbmUifQ.Xfn4JEOHo-Px7vy0TVyo3malCFlj3eFvzAJejqlefPM"
 ```
@@ -128,7 +128,7 @@ Sign up to the system
 
 ```bash
 curl --request POST -sL \
-    --url 'http://localhost:3000/signup'\
+    --url 'http://localhost:8080/signup'\
     --header "Content-Type: application/json" \
     --data '{"username":"jane","password":"doe"}'
   ```
@@ -137,7 +137,7 @@ login to the system
 
 ```bash
 curl --request POST -sL \
-    --url 'http://localhost:3000/login'\
+    --url 'http://localhost:8080/login'\
     --header "Content-Type: application/json" \
     --data '{"username":"jane","password":"doe"}'
 ```
