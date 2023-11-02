@@ -11,7 +11,7 @@ val redis_version: String by project
 plugins {
     application
     jacoco
-    kotlin("jvm") version "1.9.10"
+    kotlin("jvm") version "1.9.20"
     id("org.jetbrains.kotlin.plugin.serialization") version "1.9.20"
     id("com.github.johnrengelman.shadow") version "7.0.0"
     id("org.sonarqube") version "4.4.1.3373"
