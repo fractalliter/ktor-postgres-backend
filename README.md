@@ -2,6 +2,12 @@
 
 Here lays a Kotlin web project with Ktor framework, Postgres database, and JWT Authentication.
 
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=fractalliter_ktor-postgres-backend&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=fractalliter_ktor-postgres-backend)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=fractalliter_ktor-postgres-backend&metric=bugs)](https://sonarcloud.io/summary/new_code?id=fractalliter_ktor-postgres-backend)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=fractalliter_ktor-postgres-backend&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=fractalliter_ktor-postgres-backend)
+[![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=fractalliter_ktor-postgres-backend&metric=duplicated_lines_density)](https://sonarcloud.io/summary/new_code?id=fractalliter_ktor-postgres-backend)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=fractalliter_ktor-postgres-backend&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=fractalliter_ktor-postgres-backend)
+
 The project comprises the following ingredients:
 
 - [Ktor](https://ktor.io/) server
