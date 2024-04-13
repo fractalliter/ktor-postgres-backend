@@ -5,24 +5,23 @@ import io.ktor.server.testing.*
 import org.junit.Test
 import kotlin.test.assertNotEquals
 import kotlin.test.assertNotNull
-
 class NodeServiceTest {
-    @Test
-    fun getHierarchy() = testApplication {
-        createClient { }
+
+    private fun nodeServiceTest(test: suspend () -> Unit) = testApplication {
+        createClient {  }
         environment {
             config = ApplicationConfig("application-test.conf")
         }
+        test()
+    }
+    @Test
+    fun getHierarchy() = nodeServiceTest {
         val hierarchy = nodeService.getHierarchy()
         assertNotNull(hierarchy)
     }
 
     @Test
-    fun findByName() = testApplication {
-        createClient { }
-        environment {
-            config = ApplicationConfig("application-test.conf")
-        }
+    fun findByName() = nodeServiceTest {
         nodeService.createHierarchy(
             mapOf(
                 "Pete" to "Nick",
@@ -37,11 +36,7 @@ class NodeServiceTest {
     }
 
     @Test
-    fun createHierarchy() = testApplication {
-        createClient {}
-        environment {
-            config = ApplicationConfig("application-test.conf")
-        }
+    fun createHierarchy() = nodeServiceTest {
         val response = nodeService.createHierarchy(
             mapOf(
                 "Pete" to "Nick",
@@ -54,11 +49,7 @@ class NodeServiceTest {
     }
 
     @Test
-    fun retrieveSupervisors() = testApplication {
-        createClient { }
-        environment {
-            config = ApplicationConfig("application-test.conf")
-        }
+    fun retrieveSupervisors() = nodeServiceTest {
         nodeService.createHierarchy(
             mapOf(
                 "Pete" to "Nick",

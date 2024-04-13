@@ -1,6 +1,6 @@
 package com.personia.dao.node
 
-import com.personia.models.Node
+import com.personia.dto.Node
 
 interface NodeDaoFacade {
     suspend fun allConnections(): List<Node>

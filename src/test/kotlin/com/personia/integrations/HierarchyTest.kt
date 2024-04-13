@@ -1,5 +1,6 @@
 package com.personia.integrations
 
+import com.personia.dto.Token
 import com.personia.plugins.configureRouting
 import com.personia.utils.randomString
 import io.ktor.client.*
@@ -8,7 +9,7 @@ import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
-import io.ktor.serialization.kotlinx.json.*
+import io.ktor.serialization.gson.*
 import io.ktor.server.config.*
 import io.ktor.server.testing.*
 import kotlin.test.Test
@@ -16,15 +17,13 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
-data class Token(val token: String)
-
 class HierarchyTest {
 
     @Test
     fun testHierarchy() = testApplication {
         val client = createClient {
             install(ContentNegotiation) {
-                json()
+                gson()
             }
         }
         assertNotNull(client)

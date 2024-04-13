@@ -2,7 +2,7 @@ package com.personia.services
 
 import com.personia.dao.user.UserDaoFacade
 import com.personia.dao.user.userDAO
-import com.personia.models.User
+import com.personia.dto.User
 import com.personia.utils.Hasher
 import io.ktor.server.plugins.*
 

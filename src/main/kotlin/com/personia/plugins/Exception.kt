@@ -1,13 +1,12 @@
 package com.personia.plugins
 
+import com.personia.dto.Exception
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.plugins.*
 import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.response.*
 import java.sql.SQLException
-
-data class ExceptionTransform(val message: String?, val code: Int)
 
 fun Application.configureException() {
     install(StatusPages) {
@@ -19,7 +18,7 @@ fun Application.configureException() {
                     log.info(cause.message)
                     call.response.status(HttpStatusCode.BadRequest)
                     call.respond(
-                        ExceptionTransform(cause.message, HttpStatusCode.BadRequest.value)
+                        Exception(cause.message, HttpStatusCode.BadRequest.value)
                     )
                 }
 
@@ -27,7 +26,7 @@ fun Application.configureException() {
                     log.info(cause.message)
                     call.response.status(HttpStatusCode.Forbidden)
                     call.respond(
-                        ExceptionTransform("You are a bad guy", HttpStatusCode.Forbidden.value),
+                        Exception("You are a bad guy", HttpStatusCode.Forbidden.value),
                     )
                 }
 
@@ -35,7 +34,7 @@ fun Application.configureException() {
                     log.info(cause.message)
                     call.response.status(HttpStatusCode.BadRequest)
                     call.respond(
-                        ExceptionTransform(
+                        Exception(
                             "duplicate key value violates unique constraint.",
                             HttpStatusCode.BadRequest.value
                         ),
@@ -46,15 +45,15 @@ fun Application.configureException() {
                     log.error(cause.message)
                     call.response.status(HttpStatusCode.NotFound)
                     call.respond(
-                       ExceptionTransform(cause.message, HttpStatusCode.NotFound.value),
+                        Exception(cause.message, HttpStatusCode.NotFound.value),
                     )
                 }
 
-                is Exception -> {
+                is java.lang.Exception -> {
                     log.error(cause.message)
                     call.response.status(HttpStatusCode.InternalServerError)
                     call.respond(
-                        ExceptionTransform(cause.message, HttpStatusCode.InternalServerError.value),
+                        Exception(cause.message, HttpStatusCode.InternalServerError.value),
                     )
                 }
             }

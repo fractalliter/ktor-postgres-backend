@@ -1,6 +1,6 @@
 package com.personia.utils
 
-import com.personia.models.User
+import com.personia.dto.User
 import org.mindrot.jbcrypt.BCrypt
 
 object Hasher {
