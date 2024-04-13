@@ -3,7 +3,6 @@ val kotlin_version: String by project
 val logback_version: String by project
 val exposed_version: String by project
 val database_driver_version: String by project
-val gson_version: String by project
 val jbcrypt_version: String by project
 val hikaricp_version: String by project
 val redis_version: String by project
