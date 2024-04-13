@@ -36,7 +36,7 @@ class HierarchyTest {
         }
         val responseLogin = authenticateClient(client)
         assertNotNull(responseLogin)
-        val accessToken = extractToken(responseLogin)
+        val accessToken = responseLogin.body<Token?>()
         assertNotNull(accessToken)
 
         // Testing hierarchy endpoint
@@ -55,10 +55,6 @@ class HierarchyTest {
         }
         assertEquals(HttpStatusCode.OK, response.status)
         assertTrue(response.bodyAsText().contains("Jonas"))
-    }
-
-    private suspend fun extractToken(responseLogin: HttpResponse): Token? {
-        return responseLogin.body<Token?>()
     }
 
     private suspend fun authenticateClient(client: HttpClient): HttpResponse {
@@ -80,7 +76,6 @@ class HierarchyTest {
             setBody(credential)
         }
         assertEquals(HttpStatusCode.OK, responseLogin.status)
-        assertTrue(responseLogin.bodyAsText().contains("token"))
         return responseLogin
     }
 }

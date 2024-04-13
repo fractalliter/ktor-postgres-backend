@@ -58,7 +58,7 @@ class UserTest {
         assertEquals(HttpStatusCode.OK, responseLogin.status)
         assertTrue(responseLogin.bodyAsText().contains("token"))
 
-        // Test: login with wrong password
+        // Test: login with the wrong password
         val wrongPasswordCredential = credentials + mapOf("password" to randomString(15))
         val responseWrongPassword = client.post("/login") {
             contentType(ContentType.Application.Json)
