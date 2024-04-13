@@ -51,7 +51,6 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposed_version")
     // add database driver below, default is postgres
     implementation("org.postgresql:postgresql:$database_driver_version")
-    implementation("com.google.code.gson:gson:$gson_version")
     implementation("org.mindrot:jbcrypt:$jbcrypt_version")
     implementation("io.github.crackthecodeabhi:kreds:$redis_version")
     implementation("com.zaxxer:HikariCP:$hikaricp_version")

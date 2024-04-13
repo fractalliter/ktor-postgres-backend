@@ -29,7 +29,7 @@ class NodeService(private val nodeRepository: NodeDaoFacade) {
         hierarchy.forEach { (node, supervisor) -> nodeRepository.upsertNode(node, supervisor) }
         val tempMap = graph.transformToNestedMap(dfs)
         val rootValue = tempMap[root] ?: mapOf()
-        return mapOf(root to rootValue)
+        return hashMapOf(root to rootValue)
     }
 
     suspend fun retrieveSupervisors(name: String, level: Int): Map<String, Map<String, Any>?> {
@@ -38,7 +38,7 @@ class NodeService(private val nodeRepository: NodeDaoFacade) {
         nodeRepository.allConnections().forEach { graph.connect(it.name, it.supervisor) }
         val visited = graph.dfs(name, level)
         val tmpMap = graph.transformToNestedMap(visited)
-        return mapOf(name to tmpMap[name])
+        return hashMapOf(name to tmpMap[name])
     }
 
 }
