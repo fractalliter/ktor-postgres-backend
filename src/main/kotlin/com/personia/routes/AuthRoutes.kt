@@ -2,7 +2,8 @@ package com.personia.routes
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
-import com.personia.models.User
+import com.personia.dto.Token
+import com.personia.dto.User
 import com.personia.services.UserService
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -28,7 +29,8 @@ fun Route.authRouting(config: ApplicationConfig, userService: UserService) {
                 .withClaim("username", user.username)
                 .withExpiresAt(Date(System.currentTimeMillis() + expiration))
                 .sign(Algorithm.HMAC256(secret))
-            call.respond(hashMapOf("token" to token))
+            val response = Token(token)
+            call.respond(response)
         } else call.respond(HttpStatusCode.Unauthorized, "username/password is wrong")
     }
 

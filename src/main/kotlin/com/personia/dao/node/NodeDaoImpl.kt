@@ -1,7 +1,7 @@
 package com.personia.dao.node
 
 import com.personia.dao.DatabaseFactory.dbQuery
-import com.personia.models.Node
+import com.personia.dto.Node
 import com.personia.models.Nodes
 import org.jetbrains.exposed.sql.*
 

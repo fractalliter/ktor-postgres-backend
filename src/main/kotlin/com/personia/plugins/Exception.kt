@@ -1,6 +1,6 @@
 package com.personia.plugins
 
-import com.google.gson.Gson
+import com.personia.dto.Exception
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.plugins.*
@@ -8,67 +8,52 @@ import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.response.*
 import java.sql.SQLException
 
-data class ExceptionTransform(val message: String?, val code: Int)
-
-fun transformException(message: String?, code: Int): String {
-    val gson = Gson()
-    val exception = ExceptionTransform(message, code)
-    return gson.toJson(exception)
-}
-
 fun Application.configureException() {
     install(StatusPages) {
         exception<Throwable> { call, cause ->
 
             val log = call.application.environment.log
-            val applicationJson = ContentType("application", "json")
-
             when (cause) {
                 is AssertionError -> {
                     log.info(cause.message)
-                    call.respondText(
-                        text = transformException(cause.message, HttpStatusCode.BadRequest.value),
-                        status = HttpStatusCode.BadRequest,
-                        contentType = applicationJson
+                    call.response.status(HttpStatusCode.BadRequest)
+                    call.respond(
+                        Exception(cause.message, HttpStatusCode.BadRequest.value)
                     )
                 }
 
                 is SecurityException -> {
                     log.info(cause.message)
-                    call.respondText(
-                        text = transformException("You are a bad guy", HttpStatusCode.Forbidden.value),
-                        status = HttpStatusCode.Forbidden,
-                        contentType = applicationJson
+                    call.response.status(HttpStatusCode.Forbidden)
+                    call.respond(
+                        Exception("You are a bad guy", HttpStatusCode.Forbidden.value),
                     )
                 }
 
                 is SQLException -> {
                     log.info(cause.message)
-                    call.respondText(
-                        text = transformException(
+                    call.response.status(HttpStatusCode.BadRequest)
+                    call.respond(
+                        Exception(
                             "duplicate key value violates unique constraint.",
                             HttpStatusCode.BadRequest.value
                         ),
-                        status = HttpStatusCode.Forbidden,
-                        contentType = applicationJson
                     )
                 }
 
                 is NotFoundException -> {
-                    log.info(cause.message)
-                    call.respondText(
-                        text = transformException(cause.message, HttpStatusCode.NotFound.value),
-                        status = HttpStatusCode.NotFound,
-                        contentType = applicationJson
+                    log.error(cause.message)
+                    call.response.status(HttpStatusCode.NotFound)
+                    call.respond(
+                        Exception(cause.message, HttpStatusCode.NotFound.value),
                     )
                 }
 
-                is Exception -> {
+                is java.lang.Exception -> {
                     log.error(cause.message)
-                    call.respondText(
-                        text = transformException(cause.message, HttpStatusCode.InternalServerError.value),
-                        status = HttpStatusCode.InternalServerError,
-                        contentType = applicationJson
+                    call.response.status(HttpStatusCode.InternalServerError)
+                    call.respond(
+                        Exception(cause.message, HttpStatusCode.InternalServerError.value),
                     )
                 }
             }

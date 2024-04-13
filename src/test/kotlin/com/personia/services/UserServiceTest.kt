@@ -1,6 +1,6 @@
 package com.personia.services
 
-import com.personia.models.User
+import com.personia.dto.User
 import com.personia.utils.randomString
 import io.ktor.server.config.*
 import io.ktor.server.testing.*
@@ -10,12 +10,16 @@ import kotlin.test.assertTrue
 
 class UserServiceTest {
 
-    @Test
-    fun createUser() = testApplication {
-        createClient { }
+    private fun userServiceTest(test: suspend () -> Unit) = testApplication {
+        createClient {  }
         environment {
             config = ApplicationConfig("application-test.conf")
         }
+        test()
+    }
+
+    @Test
+    fun createUser() = userServiceTest {
         val user = userService.createUser(
             User(
                 username = randomString(12),
@@ -28,11 +32,7 @@ class UserServiceTest {
     }
 
     @Test
-    fun loginUser() = testApplication {
-        createClient { }
-        environment {
-            config = ApplicationConfig("application-test.conf")
-        }
+    fun loginUser() = userServiceTest {
         val username = randomString(12)
         val password = randomString(16)
         userService.createUser(

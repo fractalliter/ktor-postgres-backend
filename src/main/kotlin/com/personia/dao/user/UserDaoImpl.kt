@@ -1,7 +1,7 @@
 package com.personia.dao.user
 
 import com.personia.dao.DatabaseFactory.dbQuery
-import com.personia.models.User
+import com.personia.dto.User
 import com.personia.models.Users
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.insert

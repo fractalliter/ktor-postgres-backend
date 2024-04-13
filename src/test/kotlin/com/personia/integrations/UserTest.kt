@@ -6,7 +6,7 @@ import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
-import io.ktor.serialization.kotlinx.json.*
+import io.ktor.serialization.gson.*
 import io.ktor.server.config.*
 import io.ktor.server.testing.*
 import kotlin.test.Test
@@ -19,7 +19,7 @@ class UserTest {
     fun testAuthFlow() = testApplication {
         val client = createClient {
             install(ContentNegotiation) {
-                json()
+                gson()
             }
         }
         environment {
@@ -47,7 +47,7 @@ class UserTest {
             contentType(ContentType.Application.Json)
             setBody(credentials)
         }
-        assertEquals(HttpStatusCode.Forbidden, responseDupSignUp.status)
+        assertEquals(HttpStatusCode.BadRequest, responseDupSignUp.status)
         assertTrue(responseDupSignUp.bodyAsText().contains("duplicate key value violates unique constraint."))
 
         // Test: login user
@@ -58,7 +58,7 @@ class UserTest {
         assertEquals(HttpStatusCode.OK, responseLogin.status)
         assertTrue(responseLogin.bodyAsText().contains("token"))
 
-        // Test: login with wrong password
+        // Test: login with the wrong password
         val wrongPasswordCredential = credentials + mapOf("password" to randomString(15))
         val responseWrongPassword = client.post("/login") {
             contentType(ContentType.Application.Json)

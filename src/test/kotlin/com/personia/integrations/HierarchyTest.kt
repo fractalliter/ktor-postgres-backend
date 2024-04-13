@@ -1,14 +1,15 @@
 package com.personia.integrations
 
-import com.google.gson.Gson
+import com.personia.dto.Token
 import com.personia.plugins.configureRouting
 import com.personia.utils.randomString
 import io.ktor.client.*
+import io.ktor.client.call.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
-import io.ktor.serialization.kotlinx.json.*
+import io.ktor.serialization.gson.*
 import io.ktor.server.config.*
 import io.ktor.server.testing.*
 import kotlin.test.Test
@@ -16,15 +17,13 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
-data class Token(val token: String)
-
 class HierarchyTest {
 
     @Test
     fun testHierarchy() = testApplication {
         val client = createClient {
             install(ContentNegotiation) {
-                json()
+                gson()
             }
         }
         assertNotNull(client)
@@ -36,7 +35,7 @@ class HierarchyTest {
         }
         val responseLogin = authenticateClient(client)
         assertNotNull(responseLogin)
-        val accessToken = extractToken(responseLogin)
+        val accessToken = responseLogin.body<Token?>()
         assertNotNull(accessToken)
 
         // Testing hierarchy endpoint
@@ -55,11 +54,6 @@ class HierarchyTest {
         }
         assertEquals(HttpStatusCode.OK, response.status)
         assertTrue(response.bodyAsText().contains("Jonas"))
-    }
-
-    private suspend fun extractToken(responseLogin: HttpResponse): Token? {
-        val gson = Gson()
-        return gson.fromJson(responseLogin.bodyAsText(), Token::class.java)
     }
 
     private suspend fun authenticateClient(client: HttpClient): HttpResponse {
@@ -81,7 +75,6 @@ class HierarchyTest {
             setBody(credential)
         }
         assertEquals(HttpStatusCode.OK, responseLogin.status)
-        assertTrue(responseLogin.bodyAsText().contains("token"))
         return responseLogin
     }
 }
