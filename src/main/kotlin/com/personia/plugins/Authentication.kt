@@ -26,7 +26,7 @@ fun Application.configureAuthentication(config: ApplicationConfig) {
                     .build()
             )
             validate { credential ->
-                if (credential.payload.getClaim("username").asString() != "") {
+                if (!credential.payload.getClaim("username").asString().isNullOrEmpty()) {
                     JWTPrincipal(credential.payload)
                 } else {
                     null
