@@ -17,8 +17,8 @@ class UserDaoImpl : UserDaoFacade {
 
     override suspend fun createUser(user: User): User? = dbQuery {
         val insertStatement = Users.insert {
-            it[Users.username] = user.username
-            it[Users.password] = user.password
+            it[username] = user.username
+            it[password] = user.password
         }
         insertStatement.resultedValues?.singleOrNull()?.let(::resultRowToNode)
     }
