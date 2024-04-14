@@ -1,27 +1,23 @@
 package com.personia.services
 
-import io.ktor.server.config.*
+import com.personia.configureUnitTestApp
 import io.ktor.server.testing.*
 import org.junit.Test
 import kotlin.test.assertNotEquals
 import kotlin.test.assertNotNull
+
 class NodeServiceTest {
 
-    private fun nodeServiceTest(test: suspend () -> Unit) = testApplication {
-        createClient {  }
-        environment {
-            config = ApplicationConfig("application-test.conf")
-        }
-        test()
-    }
     @Test
-    fun getHierarchy() = nodeServiceTest {
+    fun getHierarchy() = testApplication {
+        configureUnitTestApp()
         val hierarchy = nodeService.getHierarchy()
         assertNotNull(hierarchy)
     }
 
     @Test
-    fun findByName() = nodeServiceTest {
+    fun findByName() = testApplication {
+        configureUnitTestApp()
         nodeService.createHierarchy(
             mapOf(
                 "Pete" to "Nick",
@@ -36,7 +32,8 @@ class NodeServiceTest {
     }
 
     @Test
-    fun createHierarchy() = nodeServiceTest {
+    fun createHierarchy() = testApplication {
+        configureUnitTestApp()
         val response = nodeService.createHierarchy(
             mapOf(
                 "Pete" to "Nick",
@@ -49,7 +46,8 @@ class NodeServiceTest {
     }
 
     @Test
-    fun retrieveSupervisors() = nodeServiceTest {
+    fun retrieveSupervisors() = testApplication {
+        configureUnitTestApp()
         nodeService.createHierarchy(
             mapOf(
                 "Pete" to "Nick",

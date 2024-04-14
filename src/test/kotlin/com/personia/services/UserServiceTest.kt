@@ -1,40 +1,38 @@
 package com.personia.services
 
+import com.personia.configureUnitTestApp
 import com.personia.dto.User
 import com.personia.utils.randomString
-import io.ktor.server.config.*
 import io.ktor.server.testing.*
 import org.junit.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 class UserServiceTest {
-
-    private fun userServiceTest(test: suspend () -> Unit) = testApplication {
-        createClient {  }
-        environment {
-            config = ApplicationConfig("application-test.conf")
-        }
-        test()
-    }
+    private val username = randomString(12)
+    private val password = randomString(16)
 
     @Test
-    fun createUser() = userServiceTest {
+    fun createUser() = testApplication {
+        configureUnitTestApp()
         val user = userService.createUser(
             User(
-                username = randomString(12),
-                password = randomString(20)
+                username = username,
+                password = password
             )
         )
 
         assertNotNull(user)
         assertNotNull(user.id)
+        assertEquals(username, user.username)
+        assertNotEquals(password, user.password)
     }
 
     @Test
-    fun loginUser() = userServiceTest {
-        val username = randomString(12)
-        val password = randomString(16)
+    fun loginUser() = testApplication {
+        configureUnitTestApp()
         userService.createUser(
             User(
                 username = username,
