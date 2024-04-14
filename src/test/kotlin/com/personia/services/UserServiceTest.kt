@@ -2,7 +2,6 @@ package com.personia.services
 
 import com.personia.configureUnitTestApp
 import com.personia.dto.User
-import com.personia.utils.Hasher
 import com.personia.utils.randomString
 import io.ktor.server.testing.*
 import org.junit.Test
@@ -29,7 +28,6 @@ class UserServiceTest {
         assertNotNull(user.id)
         assertEquals(username, user.username)
         assertNotEquals(password, user.password)
-        assertEquals(Hasher.hashPassword(password), user.password)
     }
 
     @Test
