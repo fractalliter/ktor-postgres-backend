@@ -44,7 +44,7 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
       - name: Build with Gradle
-        run: ./gradlew build --no-daemon
+        run: ./gradlew build
         env:
           POSTGRES_DB: personia_test
           POSTGRES_USER: postgres
@@ -59,7 +59,7 @@ jobs:
           JWT_REALM: Access to 'hierarchy'
           JWT_EXPIRATION: 31536000
       - name: Test with Gradle
-        run: ./gradlew test jacocoTestReport sonarqube
+        run: ./gradlew test jacocoTestReport
         env:
           POSTGRES_DB: personia_test
           POSTGRES_USER: postgres
