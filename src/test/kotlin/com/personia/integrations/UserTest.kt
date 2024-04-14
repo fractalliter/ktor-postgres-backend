@@ -15,9 +15,13 @@ import kotlin.test.assertTrue
 
 class UserTest {
 
-    @Test
-    fun testAuthFlow() = testApplication {
-        val client = createClient {
+    val credentials = mapOf(
+        "username" to randomString(10),
+        "password" to randomString(10)
+    )
+
+    private fun userTestApp(test: suspend ApplicationTestBuilder.() -> Unit) = testApplication {
+        createClient {
             install(ContentNegotiation) {
                 gson()
             }
@@ -28,20 +32,21 @@ class UserTest {
         application {
             configureRouting(environment.config)
         }
+        test()
+    }
 
-        val credentials = mapOf(
-            "username" to randomString(10),
-            "password" to randomString(10)
-        )
-
-        // Test: sing up user
+    @Test
+    fun testSignUp() = userTestApp {
         val responseSignUp = client.post("/signup") {
             contentType(ContentType.Application.Json)
             setBody(credentials)
         }
         assertEquals(HttpStatusCode.Created, responseSignUp.status)
         assertEquals("User singed up", responseSignUp.bodyAsText())
+    }
 
+    @Test
+    fun testDuplicateSignup() = userTestApp{
         // Test: duplicate username exception
         val responseDupSignUp = client.post("/signup") {
             contentType(ContentType.Application.Json)
@@ -49,16 +54,20 @@ class UserTest {
         }
         assertEquals(HttpStatusCode.BadRequest, responseDupSignUp.status)
         assertTrue(responseDupSignUp.bodyAsText().contains("duplicate key value violates unique constraint."))
+    }
 
-        // Test: login user
+    @Test
+    fun testLogin() = userTestApp {
         val responseLogin = client.post("/login") {
             contentType(ContentType.Application.Json)
             setBody(credentials)
         }
         assertEquals(HttpStatusCode.OK, responseLogin.status)
         assertTrue(responseLogin.bodyAsText().contains("token"))
+    }
 
-        // Test: login with the wrong password
+    @Test
+    fun testLoginWrongPass()= userTestApp {
         val wrongPasswordCredential = credentials + mapOf("password" to randomString(15))
         val responseWrongPassword = client.post("/login") {
             contentType(ContentType.Application.Json)
@@ -66,8 +75,10 @@ class UserTest {
         }
         assertEquals(HttpStatusCode.BadRequest, responseWrongPassword.status)
         assertTrue(responseWrongPassword.bodyAsText().contains("Wrong Password"))
+    }
 
-        // Test: login with username that doesn't exist in the system
+    @Test
+    fun testLoginForNonExistingUser() = userTestApp {
         val wrongUsernameCredential = credentials + mapOf("username" to randomString(12))
         val responseUserNotFound = client.post("/login") {
             contentType(ContentType.Application.Json)
