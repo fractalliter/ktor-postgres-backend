@@ -19,8 +19,7 @@ import kotlin.test.assertTrue
 
 class HierarchyTest {
 
-    @Test
-    fun testHierarchy() = testApplication {
+    private fun hierarchyTestApp(test: suspend ApplicationTestBuilder.() -> Unit) = testApplication {
         val client = createClient {
             install(ContentNegotiation) {
                 gson()
@@ -33,12 +32,15 @@ class HierarchyTest {
         application {
             configureRouting(environment.config)
         }
+        test()
+    }
+
+    @Test
+    fun testHierarchy() = hierarchyTestApp {
         val responseLogin = authenticateClient(client)
         assertNotNull(responseLogin)
         val accessToken = responseLogin.body<Token?>()
         assertNotNull(accessToken)
-
-        // Testing hierarchy endpoint
         val responseHierarchy = client.post("/hierarchy") {
             contentType(ContentType.Application.Json)
             header("Authorization", "Bearer ${accessToken.token}")
@@ -46,8 +48,14 @@ class HierarchyTest {
         }
         assertEquals(HttpStatusCode.OK, responseHierarchy.status)
         assertTrue(responseHierarchy.bodyAsText().contains("Jonas"))
+    }
 
-        // Testing supervisors
+    @Test
+    fun testSupervisor() = hierarchyTestApp {
+        val responseLogin = authenticateClient(client)
+        assertNotNull(responseLogin)
+        val accessToken = responseLogin.body<Token?>()
+        assertNotNull(accessToken)
         val response = client.get("hierarchy/Nick/supervisors") {
             contentType(ContentType.Application.Json)
             header("Authorization", "Bearer ${accessToken.token}")
