@@ -175,3 +175,11 @@ docker-compose --file docker-compose-test.yml down -v
 
 CI workflow prepares the database, runs the Gradle build with tests, 
 and generates a good quality report to [Codacy](https://www.codacy.com/).
+
+## Todo
+
+- [ ] Increase test coverage
+- [ ] Add caching
+- [ ] E2E testing
+- [ ] OpenAPI specifications
+- [ ] Change to GUAVA
